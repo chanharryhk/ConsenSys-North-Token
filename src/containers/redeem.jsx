@@ -1,0 +1,152 @@
+import React, {Component} from 'react';
+import HumanStandardTokenContract from '../../build/contracts/HumanStandardToken.json'
+import {Card, CardText, CardTitle} from 'material-ui/Card';
+import TextField from 'material-ui/TextField';
+import Dialog from 'material-ui/Dialog';
+import RaisedButton from 'material-ui/RaisedButton';
+import getWeb3 from '../utils/getWeb3';
+
+const styles = {
+    card: {
+      backgroundColor: "#00bcd4",
+      color: "white"
+    },
+    container: {
+      textAlign: "center",
+    },
+    title: {
+      fontSize: "175%",
+    },
+    cardTitle: {
+      fontFamily: "Roboto, sans-serif",
+      fontSize: "2em",
+      textAlign: "left",
+      color: "white",
+    },
+    wrap: {
+      padding: "5%",
+    },
+    underlineStyle: {
+      borderColor: "white",
+    },
+    floatingLabelStyle: {
+      color: "white",
+    },
+    textFieldStyle: {
+      width: "50%",
+    },
+    buttonStyle: {
+      margin: 12,
+    },
+}
+
+class redeem extends Component{
+  constructor(props) {
+    super(props);
+    const self = this;
+    self.state = {
+      open: false,
+      value: '',
+      web3: null,
+      message: '',
+      humanStandardTokenInstance: {},
+    };
+    self.handleChange = self.handleChange.bind(self);
+  }
+  componentWillMount() {
+    // Get network provider and web3 instance.
+    // See utils/getWeb3 for more info.
+    getWeb3
+    .then(results => {
+      this.setState({
+        web3: results.web3
+      })
+      this.instantiateContract()
+    })
+    .catch(() => {
+      console.log('Error finding web3.')
+    })
+    console.log("0x6352f8555Ccc1B5D4022d366C2Df7c194a05f561");
+  }
+
+  instantiateContract(){
+    const contract = require('truffle-contract')
+    const HumanStandardToken = contract(HumanStandardTokenContract)
+    HumanStandardToken.setProvider(this.state.web3.currentProvider)
+
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      HumanStandardToken.deployed()
+      .then((instance) => {
+        this.setState({humanStandardTokenInstance: instance})
+      })
+    })
+  }
+
+  handleChange(event){
+    this.setState({[event.target.id]: event.target.value});
+  }
+
+  handleClose = () => {
+    this.setState({open: false});
+  };
+
+  checkBalance(){
+    if(this.state.web3.isAddress(this.state.employeeAddress)){
+      this.state.humanStandardTokenInstance.balanceOf.call(this.state.employeeAddress)
+      .then((result) => {
+        if(result.c == 0){
+          this.setState({message: 'Shhhh don\'t let Joe find out that you have '+ result.c+ ' tokens ಠ~ಠ'})
+        }else{
+          this.setState({message: 'Eyyyooo! You got '+ result.c +' ConsenSys North Tokens! ☜(ﾟヮﾟ☜)'})
+        }
+      })
+    }else if(this.state.employeeAddress === undefined || this.state.employeeAddress === ''){
+      this.setState({message: 'Silly employee you havent entered anything ¯\\_(ツ)_/¯'})
+    }else{
+      this.setState({message: this.state.employeeAddress + ' is not an ethereum address... ummm do you even work at ConsenSys? ಠ_ಠ'})
+    }
+    this.setState({open: true});
+  }
+  render(){
+    return(
+      <div style={styles.container}>
+        <Card style={styles.card}>
+          <div style={styles.wrap}>
+            <CardTitle title="TOKEN BALANCE" titleStyle={styles.cardTitle}/>
+              <TextField
+                floatingLabelText="0x | Address"
+                floatingLabelStyle={styles.floatingLabelStyle}
+                floatingLabelFocusStyle={styles.floatingLabelStyle}
+                underlineFocusStyle={styles.underlineStyle}
+                style={styles.textFieldStyle}
+                type="text"
+                id="employeeAddress"
+                onChange={this.handleChange}
+              />
+            <br/>
+            <RaisedButton label="CHECK" labelColor="#00BCD4" style={styles.buttonStyle} onTouchTap={this.checkBalance.bind(this)}/>
+            <Dialog
+              title="ConsenSys North"
+              modal={false}
+              open={this.state.open}
+              onRequestClose={this.handleClose}
+            >
+              {this.state.message}
+            </Dialog>
+          </div>
+          <CardText color="white">
+            <div style={styles.title}>
+              <h3>Redeeming has not started yet but keep collecting!</h3>
+              <br/>
+              <img src="https://image.flaticon.com/icons/svg/214/214697.svg" alt="Blast Off!" height="150" width="150"/>
+              <br/>
+              <h3>Come back soon for the alpha launch!</h3>
+            </div>
+          </CardText>
+        </Card>
+      </div>
+    );
+  }
+}
+
+export default redeem;
