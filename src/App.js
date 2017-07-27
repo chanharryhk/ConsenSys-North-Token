@@ -72,7 +72,6 @@ class App extends Component {
 
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      console.log(this.state.web3.currentProvider);
       console.log(accounts);
     })
   }

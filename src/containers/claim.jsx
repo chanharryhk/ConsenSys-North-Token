@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import {Card, CardTitle} from 'material-ui/Card';
+import HumanStandardTokenContract from '../../build/contracts/HumanStandardToken.json'
+import getWeb3 from '../utils/getWeb3';
 
+import {Card, CardTitle} from 'material-ui/Card';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
@@ -60,57 +62,127 @@ class claim extends Component {
 
   constructor(props) {
     super(props);
+    const self = this;
     this.state = {
       value: 1,
       finished: false,
       stepIndex: 0,
       tokensClaimable: 0,
+      disabledButton: true,
+      humanStandardTokenInstance: {},
     };
+    self.handleChange = self.handleChange.bind(self);
+  }
+  componentWillMount() {
+    // Get network provider and web3 instance.
+    // See utils/getWeb3 for more info.
+    getWeb3
+    .then(results => {
+      this.setState({
+        web3: results.web3
+      })
+      this.instantiateContract()
+    })
+    .catch(() => {
+      console.log('Error finding web3.')
+    })
   }
 
-  handleChange = (event, index, value) => this.setState({value});
+  instantiateContract(){
+    const contract = require('truffle-contract')
+    const HumanStandardToken = contract(HumanStandardTokenContract)
+    HumanStandardToken.setProvider(this.state.web3.currentProvider)
+
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      HumanStandardToken.deployed()
+      .then((instance) => {
+        this.setState({humanStandardTokenInstance: instance})
+      })
+    })
+    console.log(this.state.humanStandardTokenInstance);
+    
+  }
+
+  handleMenuChange = (event, index, value) => {
+    this.setState({value});
+    this.setState({disabledButton: false})
+    if (index === 0){
+      this.setState({tokensClaimable: 10})
+    }else if (index === 1){
+      this.setState({tokensClaimable: 200})
+    }else if (index === 2){
+      this.setState({tokensClaimable: 20})
+    }
+  }
+
+  handleChange(event){
+    this.setState({[event.target.id]: event.target.value});
+    // console.log(event.target.id);
+
+    if(this.state.web3.isAddress(event.target.value)){
+      console.log(event.target.value);
+      this.setState({disabledButton: false});
+    } else {
+      this.setState({disabledButton: true});
+      console.log("wrong");
+    }
+  }
 
   handleNext = () => {
-    const {stepIndex} = this.state;
-    // const {tokensClaimable} = this.state;
-    switch (this.state.value){
-      case 1:
-        this.setState({tokensClaimable: 10});
-        break;
-      case 2:
-        this.setState({tokensClaimable: 500});
-        break;
-      case 3:
-        this.setState({tokensClaimable: 20});
-        break;
-      default:
-        break;
+    const {stepIndex} = this.state
+    console.log(this.state.stepIndex);
+    if (this.state.stepIndex === 1){
+      this.setState({disabledButton: false})
+    }else{
+      this.setState({disabledButton: true,})
     }
-    this.setState({
-      stepIndex: stepIndex + 1,
-      finished: stepIndex >= 2,
-    });
+    this.setState({stepIndex: stepIndex + 1,});
   };
 
   handlePrev = () => {
     const {stepIndex} = this.state;
     if (stepIndex > 0) {
-      this.setState({stepIndex: stepIndex - 1});
+      this.setState({
+        stepIndex: stepIndex - 1,
+        disabledButton: true,
+      });
     }
   };
+  handleSubmit = () => {
+    const {stepIndex} = this.state
+    // this.state.humanStandardTokenInstance.transferFrom()
+    this.setState({
+      stepIndex: stepIndex + 1,
+      finished: stepIndex >= 2,
+    });
+    console.log("Submit button works!");
+  }
 
   renderStepActions(step) {
     const {stepIndex} = this.state;
+
     return (
       <div style={{margin: '12px 0'}}>
-        <RaisedButton
-          label={stepIndex === 2 ? 'Submit' : 'Next'}
-          disableTouchRipple={true}
-          disableFocusRipple={true}
-          primary={true}
-          onTouchTap={this.handleNext}
-          style={{marginRight: 12}}
-        />
+        {stepIndex === 2 ?(
+          <RaisedButton
+            label={'Submit'}
+            disableTouchRipple={true}
+            disableFocusRipple={true}
+            primary={true}
+            onTouchTap={this.handleSubmit}
+            style={{marginRight: 12}}
+          />
+        ) : (
+          <RaisedButton
+            label={'Next'}
+            disableTouchRipple={true}
+            disableFocusRipple={true}
+            primary={true}
+            onTouchTap={this.handleNext}
+            style={{marginRight: 12}}
+            disabled={this.state.disabledButton}
+          />
+        )}
         {step > 0 && (
           <FlatButton
             label="Back"
@@ -134,6 +206,11 @@ class claim extends Component {
               <Particles style={styles.particles} params={styles.particlesParam}/>
             */}
             <CardTitle title="CLAIM TOKENS" titleStyle={styles.cardTitle}/>
+            Step: {this.state.stepIndex}
+            <br/>
+            Menu: {this.state.value}
+            <br/>
+            {this.state.employeeAddress}
             <div style={{maxWidth: 500, maxHeight: 400, margin: 'auto'}}>
               <Stepper activeStep={stepIndex} orientation="vertical">
                 <Step>
@@ -141,13 +218,14 @@ class claim extends Component {
                   <StepContent>
                     <DropDownMenu
                       value={this.state.value}
-                      onChange={this.handleChange}
+                      onChange={this.handleMenuChange}
                       autoWidth={false}
                     >
                       <MenuItem value={1} primaryText="Completed A Survey" />
                       <MenuItem value={2} primaryText="Spoke at a Local Event" />
                       <MenuItem value={3} primaryText="Came into the Office" />
                     </DropDownMenu>
+                    {this.state.tokensClaimable}
                     {this.renderStepActions(0)}
                   </StepContent>
                 </Step>
@@ -161,8 +239,9 @@ class claim extends Component {
                       underlineFocusStyle={styles.underlineStyle}
                       fullWidth={true}
                       type="text"
+                      id="employeeAddress"
+                      onChange={this.handleChange}
                     />
-                    {this.state.tokensClaimable}
                     {this.renderStepActions(1)}
                   </StepContent>
                 </Step>
