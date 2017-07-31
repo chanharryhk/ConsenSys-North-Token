@@ -9,6 +9,7 @@ import TextField from 'material-ui/TextField';
 import {Step, Stepper, StepLabel, StepContent,} from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import Snackbar from 'material-ui/Snackbar';
 import {cyan500} from 'material-ui/styles/colors';
 
 import Particles from 'react-particles-js';
@@ -69,7 +70,10 @@ class claim extends Component {
       stepIndex: 0,
       tokensClaimable: 0,
       disabledButton: true,
+      open: false,
       humanStandardTokenInstance: {},
+      functionData: '',
+      fromAddressHex: '',
     };
     self.handleChange = self.handleChange.bind(self);
   }
@@ -96,11 +100,17 @@ class claim extends Component {
     this.state.web3.eth.getAccounts((error, accounts) => {
       HumanStandardToken.deployed()
       .then((instance) => {
-        this.setState({humanStandardTokenInstance: instance})
+        console.log(instance);
+        this.state.web3.eth.getTransaction("0x0650c1be6f5c0f1f33378826b3a152f79af2b590444c5bcd18a9d1385a449402", (err, result) => {
+          console.log("adf", result)
+          this.setState({fromAddressHex: result.from})
+        })
+        this.setState({
+          humanStandardTokenInstance: instance,
+        });
       })
     })
-    console.log(this.state.humanStandardTokenInstance);
-    
+
   }
 
   handleMenuChange = (event, index, value) => {
@@ -151,27 +161,50 @@ class claim extends Component {
   handleSubmit = () => {
     const {stepIndex} = this.state
     // this.state.humanStandardTokenInstance.transferFrom()
+    let data = this.state.humanStandardTokenInstance.transferFrom
+    // getData(this.state.fromAddressHex, this.state.employeeAddress, this.state.tokensClaimable);
+    console.log("Here", data);
     this.setState({
+      // open: true,
       stepIndex: stepIndex + 1,
       finished: stepIndex >= 2,
     });
-    console.log("Submit button works!");
   }
+  // handleTouchTap = () => {
+  //   this.setState({
+  //     open: true,
+  //   });
+  // };
+  // handleRequestClose = () => {
+  //   this.setState({
+  //     open: false,
+  //   });
+  // };
 
   renderStepActions(step) {
     const {stepIndex} = this.state;
 
     return (
       <div style={{margin: '12px 0'}}>
-        {stepIndex === 2 ?(
-          <RaisedButton
-            label={'Submit'}
-            disableTouchRipple={true}
-            disableFocusRipple={true}
-            primary={true}
-            onTouchTap={this.handleSubmit}
-            style={{marginRight: 12}}
-          />
+        {stepIndex >= 2 ?(
+          <span>
+            <RaisedButton
+              label={'Submit'}
+              disableTouchRipple={true}
+              disableFocusRipple={true}
+              primary={true}
+              onTouchTap={this.handleSubmit}
+              style={{marginRight: 12}}
+            />
+            {/*
+            <Snackbar
+              open={this.state.open}
+              message="XXX was added to your balance"
+              autoHideDuration={4000}
+              onRequestClose={this.handleRequestClose}
+            />
+            */}
+          </span>
         ) : (
           <RaisedButton
             label={'Next'}
@@ -225,7 +258,11 @@ class claim extends Component {
                       <MenuItem value={2} primaryText="Spoke at a Local Event" />
                       <MenuItem value={3} primaryText="Came into the Office" />
                     </DropDownMenu>
-                    {this.state.tokensClaimable}
+                    <div>
+                      <p>
+                        You are eligible for <b>{this.state.tokensClaimable}</b> tokens
+                      </p>
+                    </div>
                     {this.renderStepActions(0)}
                   </StepContent>
                 </Step>
@@ -253,6 +290,18 @@ class claim extends Component {
                 </Step>
               </Stepper>
             </div>
+            {finished && (
+            <div style={{margin: '20px 0', textAlign: 'center'}}>
+              Would you like to make another claim?
+              <br/><br/>
+              <RaisedButton label="Hell Ya" primary={true}
+                onTouchTap={(event) => {
+                  event.preventDefault();
+                  this.setState({stepIndex: 0, finished: false});
+                }}
+              />
+          </div>
+          )}
           </div>
         </Card>
       </div>
