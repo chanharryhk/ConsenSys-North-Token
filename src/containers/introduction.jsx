@@ -32,10 +32,10 @@ class introduction extends Component{
             <div style={styles.title}>
               <h1>ConsenSys North Token</h1>
               <br/>
-              <img src="https://image.flaticon.com/icons/svg/185/185286.svg" alt="Toronto" height="150" width="150"/>
               {/*
-              <img src="https://lh4.googleusercontent.com/-JyqgXDO42wo/AAAAAAAAAAI/AAAAAAAAADA/b_5Cla6h8Ow/photo.jpg" alt="Toronto" height="150" width="150"/>
+              <img src="https://image.flaticon.com/icons/svg/185/185286.svg" alt="Toronto" height="150" width="150"/>
               */}
+              <img src="https://lh4.googleusercontent.com/-JyqgXDO42wo/AAAAAAAAAAI/AAAAAAAAADA/b_5Cla6h8Ow/photo.jpg" alt="Toronto" height="150" width="150"/>
               <br/>
               <h3>Grow the Community. Collect the Tokens. Redeem for Awesome Swag</h3>
             </div>

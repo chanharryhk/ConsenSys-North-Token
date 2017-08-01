@@ -105,9 +105,7 @@ class redeem extends Component{
     if(this.state.web3.isAddress(this.state.employeeAddress)){
       this.state.humanStandardTokenInstance.balanceOf.call(this.state.employeeAddress)
       .then((result) => {
-        console.log(result.c);
-        console.log(result);
-        if(result.c == 0){
+        if(result.c[0] === 0){
           this.setState({message: 'Ahhhhh you just entered your private key!...Just kidding you just have '+ result.c + ' tokens LOL'})
           // this.setState({message: 'Shhhh don\'t let Joe find out that you have '+ result.c+ ' tokens ಠ~ಠ'})
         }else{

@@ -14,6 +14,9 @@ import {cyan500} from 'material-ui/styles/colors';
 
 import Particles from 'react-particles-js';
 
+const coder = require('../../node_modules/web3/lib/solidity/coder');
+const Tx = require('ethereumjs-tx');
+const privateKey = new Buffer('9a0b2f1c2497269a9be6badfdbbaadee668928c959ced4ecbfd6cc6c8f88a7f5', 'hex')
 
 const styles = {
   underlineStyle: {
@@ -65,6 +68,7 @@ class claim extends Component {
     super(props);
     const self = this;
     this.state = {
+      web3: null,
       value: 1,
       finished: false,
       stepIndex: 0,
@@ -100,17 +104,27 @@ class claim extends Component {
     this.state.web3.eth.getAccounts((error, accounts) => {
       HumanStandardToken.deployed()
       .then((instance) => {
+        console.log(this.state.web3);
         console.log(instance);
-        this.state.web3.eth.getTransaction("0x0650c1be6f5c0f1f33378826b3a152f79af2b590444c5bcd18a9d1385a449402", (err, result) => {
-          console.log("adf", result)
+        // console.log("abi", this.state.web3.eth.contract(HumanStandardTokenContract.abi).at(instance.address))
+        this.state.web3.eth.getTransaction("0x331c249ed094c39949728b4629ad6eb6606f7c1d501396aa1ca0dccd8d66ba07", (err, result) => {
+          console.log("Contract Deployment / getting the contract deployer's address", result);
           this.setState({fromAddressHex: result.from})
+        })
+        this.state.web3.eth.getTransaction("0xf9ef5485876ded7cc308f2ea69f5e88d0a276866ec7d55a497a8d2c859bb1c1c", (err, result) =>{
+          console.log("\"Working\" Claim's TX Data", result);
+          var decoded = coder.decodeParams(["address", "uint256"], "000000000000000000000000f4ef48df280ab3a5fa637244ff522e237a63fd8100000000000000000000000000000000000000000000000000000000000000c8")
+          console.log(decoded);
         })
         this.setState({
           humanStandardTokenInstance: instance,
         });
       })
     })
-
+    console.log(coder);
+    var decoded = coder.decodeParams(["address", "address", "uint256"], "0x23b872dd000000000000000000000000caefe1e1eec5247d7a0583d4577fbba966d3d446000000000000000000000000f4ef48df280ab3a5fa637244ff522e237a63fd8100000000000000000000000000000000000000000000000000000000000000c8")
+    console.log(decoded);
+    // 0x23b872dd000000000000000000000000caefe1e1eec5247d7a0583d4577fbba966d3d446000000000000000000000000f4ef48df280ab3a5fa637244ff522e237a63fd8100000000000000000000000000000000000000000000000000000000000000c8
   }
 
   handleMenuChange = (event, index, value) => {
@@ -130,17 +144,14 @@ class claim extends Component {
     // console.log(event.target.id);
 
     if(this.state.web3.isAddress(event.target.value)){
-      console.log(event.target.value);
       this.setState({disabledButton: false});
     } else {
       this.setState({disabledButton: true});
-      console.log("wrong");
     }
   }
 
   handleNext = () => {
     const {stepIndex} = this.state
-    console.log(this.state.stepIndex);
     if (this.state.stepIndex === 1){
       this.setState({disabledButton: false})
     }else{
@@ -160,26 +171,53 @@ class claim extends Component {
   };
   handleSubmit = () => {
     const {stepIndex} = this.state
-    // this.state.humanStandardTokenInstance.transferFrom()
-    let data = this.state.humanStandardTokenInstance.transferFrom
-    // getData(this.state.fromAddressHex, this.state.employeeAddress, this.state.tokensClaimable);
-    console.log("Here", data);
+    let rawData = this.state.humanStandardTokenInstance.contract.transfer.getData(this.state.employeeAddress , this.state.tokensClaimable)
+    console.log(rawData);
+    // var encodedFunction = this.state.web3.sha3('transferFrom(address,address,uint256)').slice(0, 10)
+    // console.log(encodedFunction);
+    // var encodedParam = coder.encodeParams(["address", "address", "uint256"], [this.state.fromAddressHex, this.state.employeeAddress, this.state.tokensClaimable]);
+    // console.log(encodedParam);
+    // var decoded = coder.decodeParams(["address", "address", "uint256"], encodedParam)
+    // console.log(decoded);
+
+    //I do not know why the following "getData" function does not work! Returns an error
+    //let data = this.state.humanStandardTokenInstance.transferFrom.getData(this.state.fromAddressHex, this.state.employeeAddress, this.state.tokensClaimable);
+//GAS PRICE???
+    // this.state.humanStandardTokenInstance.contract.transferFrom.estimateGas(this.state.fromAddressHex, this.state.employeeAddress , this.state.tokensClaimable, (err, gas) => {
+    //   console.log(gas);
+    // })
+
+    this.state.web3.eth.getTransactionCount(this.state.fromAddressHex, (err, result) => {
+      console.log(result);
+      var nonce = this.state.web3.toHex(result)
+      console.log(nonce);
+      var gasLimitHex = this.state.web3.toHex(3000000);
+      console.log();
+      var rawTx = {
+        nonce: 8,
+        gasPrice: '0x09184e72a000',
+        gasLimit: gasLimitHex,
+        to: this.state.employeeAddress,
+        value: '0x00', //Sending 0 Ether because I am just trying to transfer over tokens
+        data: rawData,
+      }
+      var tx = new Tx(rawTx);
+      tx.sign(privateKey);
+      var serializedTx = tx.serialize();
+      this.state.web3.eth.sendRawTransaction(serializedTx.toString('hex'), function(err, hash) {
+        console.log(err);
+        if (!err)
+          console.log(hash);
+      });
+    })
+
+
     this.setState({
-      // open: true,
+      open: true,
       stepIndex: stepIndex + 1,
       finished: stepIndex >= 2,
     });
   }
-  // handleTouchTap = () => {
-  //   this.setState({
-  //     open: true,
-  //   });
-  // };
-  // handleRequestClose = () => {
-  //   this.setState({
-  //     open: false,
-  //   });
-  // };
 
   renderStepActions(step) {
     const {stepIndex} = this.state;
