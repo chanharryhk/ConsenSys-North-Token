@@ -116,6 +116,7 @@ class redeem extends Component{
       this.setState({message: 'Silly employee you havent entered anything ¯\\_(ツ)_/¯'})
     }else{
       this.setState({message: this.state.employeeAddress + ' is not an ethereum address... ummm do you even work at ConsenSys? ಠ_ಠ'})
+      // this.setState({message: 'it's kinda hard information out of an invalid address})
     }
     this.setState({open: true});
   }

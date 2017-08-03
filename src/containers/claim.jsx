@@ -16,7 +16,7 @@ import Particles from 'react-particles-js';
 
 const coder = require('../../node_modules/web3/lib/solidity/coder');
 const Tx = require('ethereumjs-tx');
-const privateKey = new Buffer('9a0b2f1c2497269a9be6badfdbbaadee668928c959ced4ecbfd6cc6c8f88a7f5', 'hex')
+const privateKey = new Buffer('4218855a491347360266e032b5ee227c6ca26b5f9e29fb2bf878f2a3ec3166a2', 'hex')
 
 const styles = {
   underlineStyle: {
@@ -106,25 +106,26 @@ class claim extends Component {
       .then((instance) => {
         console.log(this.state.web3);
         console.log(instance);
-        // console.log("abi", this.state.web3.eth.contract(HumanStandardTokenContract.abi).at(instance.address))
+        console.log("abi", this.state.web3.eth.contract(HumanStandardTokenContract.abi).at(instance.address))
         this.state.web3.eth.getTransaction("0x331c249ed094c39949728b4629ad6eb6606f7c1d501396aa1ca0dccd8d66ba07", (err, result) => {
           console.log("Contract Deployment / getting the contract deployer's address", result);
           this.setState({fromAddressHex: result.from})
         })
-        this.state.web3.eth.getTransaction("0xf9ef5485876ded7cc308f2ea69f5e88d0a276866ec7d55a497a8d2c859bb1c1c", (err, result) =>{
-          console.log("\"Working\" Claim's TX Data", result);
-          var decoded = coder.decodeParams(["address", "uint256"], "000000000000000000000000f4ef48df280ab3a5fa637244ff522e237a63fd8100000000000000000000000000000000000000000000000000000000000000c8")
-          console.log(decoded);
+        this.state.web3.eth.getTransaction("0x2c21390f5b240a8d7648ea21441d188350725e4c847dbdf136ca50ae9b6e1174", (err, result) =>{
+          console.log("Console TX #1", result);
         })
+        this.state.web3.eth.getTransaction("0x258ceed2b14f3bbad76fb09fa1ea741451ab2a29d0158af7a5e7492df8d80018", (err, result) =>{
+          console.log("Console TX #2", result);
+        })
+        this.state.web3.eth.getTransaction("0x41fe53683f80e501698b24b91ae20f2d9802c8bc8a5ac100d45a052500e600cf", (err, result) =>{
+          console.log("TX Using My UI", result);
+        })
+        //0x631f00b2f523e38dc6cabf8ff97a830d841ea781f3e73a985a7ee3584760abc9
         this.setState({
           humanStandardTokenInstance: instance,
         });
       })
     })
-    console.log(coder);
-    var decoded = coder.decodeParams(["address", "address", "uint256"], "0x23b872dd000000000000000000000000caefe1e1eec5247d7a0583d4577fbba966d3d446000000000000000000000000f4ef48df280ab3a5fa637244ff522e237a63fd8100000000000000000000000000000000000000000000000000000000000000c8")
-    console.log(decoded);
-    // 0x23b872dd000000000000000000000000caefe1e1eec5247d7a0583d4577fbba966d3d446000000000000000000000000f4ef48df280ab3a5fa637244ff522e237a63fd8100000000000000000000000000000000000000000000000000000000000000c8
   }
 
   handleMenuChange = (event, index, value) => {
@@ -172,7 +173,10 @@ class claim extends Component {
   handleSubmit = () => {
     const {stepIndex} = this.state
     let rawData = this.state.humanStandardTokenInstance.contract.transfer.getData(this.state.employeeAddress , this.state.tokensClaimable)
-    console.log(rawData);
+    console.log(rawData)
+    var decoded = coder.decodeParams(["address","uint256"], rawData)
+    console.log(decoded);
+
     // var encodedFunction = this.state.web3.sha3('transferFrom(address,address,uint256)').slice(0, 10)
     // console.log(encodedFunction);
     // var encodedParam = coder.encodeParams(["address", "address", "uint256"], [this.state.fromAddressHex, this.state.employeeAddress, this.state.tokensClaimable]);
@@ -186,25 +190,43 @@ class claim extends Component {
     // this.state.humanStandardTokenInstance.contract.transferFrom.estimateGas(this.state.fromAddressHex, this.state.employeeAddress , this.state.tokensClaimable, (err, gas) => {
     //   console.log(gas);
     // })
+    console.log("Here", this.state.fromAddressHex);
 
     this.state.web3.eth.getTransactionCount(this.state.fromAddressHex, (err, result) => {
+      //"pending" is a magical word
+
       console.log(result);
       var nonce = this.state.web3.toHex(result)
       console.log(nonce);
       var gasLimitHex = this.state.web3.toHex(3000000);
-      console.log();
+    //Sending just a Transaction
+      // var transactionObject = {
+      //   nonce: 14,
+      //   gasPrice: '0x09184e72a000',
+      //   gasLimit: gasLimitHex,
+      //   to: this.state.employeeAddress,
+      //   from: this.state.fromAddressHex,
+      //   value: 1000000000000000000, //Sending 0 Ether(in wei) because I am just trying to transfer over tokens
+      //   // data: rawData,
+      // }
+      // this.state.web3.eth.sendTransaction(transactionObject, "pending", function(err, transactionHash) {
+      //   console.log(err);
+      //   if (!err)
+      //     console.log(transactionHash); // "0x7f9fade1c0d57a7af66ab4ead7c2eb7b11a91385"
+      // });
+    //Sending a Raw Transaction
       var rawTx = {
-        nonce: 8,
+        nonce: nonce, //The transactions are not going through they are still pending so that is why the nonce is incorrect
         gasPrice: '0x09184e72a000',
         gasLimit: gasLimitHex,
-        to: this.state.employeeAddress,
-        value: '0x00', //Sending 0 Ether because I am just trying to transfer over tokens
+        to: this.state.humanStandardTokenInstance.address,
+        value: "0x00", //Sending 0 Ether because I am just trying to transfer over tokens
         data: rawData,
       }
       var tx = new Tx(rawTx);
       tx.sign(privateKey);
       var serializedTx = tx.serialize();
-      this.state.web3.eth.sendRawTransaction(serializedTx.toString('hex'), function(err, hash) {
+      this.state.web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, hash) {
         console.log(err);
         if (!err)
           console.log(hash);
