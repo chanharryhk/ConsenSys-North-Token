@@ -16,7 +16,7 @@ import Particles from 'react-particles-js';
 
 const coder = require('../../node_modules/web3/lib/solidity/coder');
 const Tx = require('ethereumjs-tx');
-const privateKey = new Buffer('4218855a491347360266e032b5ee227c6ca26b5f9e29fb2bf878f2a3ec3166a2', 'hex')
+const privateKey = new Buffer('d1fe46134e808dad74d1d0182cbd29ab247be98c83fec40adb1b6b24061ccbe0', 'hex')
 
 const styles = {
   underlineStyle: {
@@ -191,45 +191,49 @@ class claim extends Component {
     //   console.log(gas);
     // })
     console.log("Here", this.state.fromAddressHex);
-
-    this.state.web3.eth.getTransactionCount(this.state.fromAddressHex, (err, result) => {
+    var gasPrice;
+    this.state.web3.eth.getTransactionCount(this.state.fromAddressHex, "pending", (err, Nonce) => {
       //"pending" is a magical word
-
-      console.log(result);
-      var nonce = this.state.web3.toHex(result)
+      var nonce = this.state.web3.toHex(Nonce)
       console.log(nonce);
-      var gasLimitHex = this.state.web3.toHex(3000000);
-    //Sending just a Transaction
-      // var transactionObject = {
-      //   nonce: 14,
-      //   gasPrice: '0x09184e72a000',
-      //   gasLimit: gasLimitHex,
-      //   to: this.state.employeeAddress,
-      //   from: this.state.fromAddressHex,
-      //   value: 1000000000000000000, //Sending 0 Ether(in wei) because I am just trying to transfer over tokens
-      //   // data: rawData,
-      // }
-      // this.state.web3.eth.sendTransaction(transactionObject, "pending", function(err, transactionHash) {
-      //   console.log(err);
-      //   if (!err)
-      //     console.log(transactionHash); // "0x7f9fade1c0d57a7af66ab4ead7c2eb7b11a91385"
-      // });
-    //Sending a Raw Transaction
-      var rawTx = {
-        nonce: nonce, //The transactions are not going through they are still pending so that is why the nonce is incorrect
-        gasPrice: '0x09184e72a000',
-        gasLimit: gasLimitHex,
+      this.state.web3.eth.estimateGas({
         to: this.state.humanStandardTokenInstance.address,
-        value: "0x00", //Sending 0 Ether because I am just trying to transfer over tokens
-        data: rawData,
-      }
-      var tx = new Tx(rawTx);
-      tx.sign(privateKey);
-      var serializedTx = tx.serialize();
-      this.state.web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, hash) {
-        console.log(err);
-        if (!err)
-          console.log(hash);
+        data: rawData
+      }, (err, gasPrice) => {
+        var gasPriceHex = this.state.web3.toHex(gasPrice);
+        var gasLimitHex = this.state.web3.toHex(3000000);
+      //Sending just a Transaction
+        // var transactionObject = {
+        //   nonce: 14,
+        //   gasPrice: '0x09184e72a000',
+        //   gasLimit: gasLimitHex,
+        //   to: this.state.employeeAddress,
+        //   from: this.state.fromAddressHex,
+        //   value: 1000000000000000000, //Sending 0 Ether(in wei) because I am just trying to transfer over tokens
+        //   // data: rawData,
+        // }
+        // this.state.web3.eth.sendTransaction(transactionObject, "pending", function(err, transactionHash) {
+        //   console.log(err);
+        //   if (!err)
+        //     console.log(transactionHash); // "0x7f9fade1c0d57a7af66ab4ead7c2eb7b11a91385"
+        // });
+      //Sending a Raw Transaction
+        var rawTx = {
+          nonce: nonce, //The transactions are not going through they are still pending so that is why the nonce is incorrect
+          gasPrice: gasPriceHex,
+          gasLimit: gasLimitHex,
+          to: this.state.humanStandardTokenInstance.address,
+          value: "0x00", //Sending 0 Ether because I am just trying to transfer over tokens
+          data: rawData,
+        }
+        var tx = new Tx(rawTx);
+        tx.sign(privateKey);
+        var serializedTx = tx.serialize();
+        this.state.web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, hash) {
+          console.log(err);
+          if (!err)
+            console.log(hash);
+        });
       });
     })
 
