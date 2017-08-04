@@ -32,7 +32,6 @@ const styles = {
   },
   wrap: {
     padding: "5%",
-    // position: "relative",
   },
   particlesContainer: {
 
@@ -104,23 +103,20 @@ class claim extends Component {
     this.state.web3.eth.getAccounts((error, accounts) => {
       HumanStandardToken.deployed()
       .then((instance) => {
-        console.log(this.state.web3);
-        console.log(instance);
-        console.log("abi", this.state.web3.eth.contract(HumanStandardTokenContract.abi).at(instance.address))
+// Web3
+        // console.log(this.state.web3);
+// Contract Instance
+        // console.log(instance);
+// Contract ABI
+        // console.log("abi", this.state.web3.eth.contract(HumanStandardTokenContract.abi).at(instance.address))
         this.state.web3.eth.getTransaction("0x331c249ed094c39949728b4629ad6eb6606f7c1d501396aa1ca0dccd8d66ba07", (err, result) => {
           console.log("Contract Deployment / getting the contract deployer's address", result);
           this.setState({fromAddressHex: result.from})
         })
-        this.state.web3.eth.getTransaction("0x2c21390f5b240a8d7648ea21441d188350725e4c847dbdf136ca50ae9b6e1174", (err, result) =>{
-          console.log("Console TX #1", result);
-        })
-        this.state.web3.eth.getTransaction("0x258ceed2b14f3bbad76fb09fa1ea741451ab2a29d0158af7a5e7492df8d80018", (err, result) =>{
-          console.log("Console TX #2", result);
-        })
-        this.state.web3.eth.getTransaction("0x41fe53683f80e501698b24b91ae20f2d9802c8bc8a5ac100d45a052500e600cf", (err, result) =>{
-          console.log("TX Using My UI", result);
-        })
-        //0x631f00b2f523e38dc6cabf8ff97a830d841ea781f3e73a985a7ee3584760abc9
+// Getting the transaction information
+        // this.state.web3.eth.getTransaction("0x2c21390f5b240a8d7648ea21441d188350725e4c847dbdf136ca50ae9b6e1174", (err, result) =>{
+        //   console.log("Transaction information", result);
+        // })
         this.setState({
           humanStandardTokenInstance: instance,
         });
@@ -142,8 +138,6 @@ class claim extends Component {
 
   handleChange(event){
     this.setState({[event.target.id]: event.target.value});
-    // console.log(event.target.id);
-
     if(this.state.web3.isAddress(event.target.value)){
       this.setState({disabledButton: false});
     } else {
@@ -172,24 +166,17 @@ class claim extends Component {
   };
   handleSubmit = () => {
     const {stepIndex} = this.state
+//Retrieving the raw data from the contract function
     let rawData = this.state.humanStandardTokenInstance.contract.transfer.getData(this.state.employeeAddress , this.state.tokensClaimable)
-    console.log(rawData)
     var decoded = coder.decodeParams(["address","uint256"], rawData)
     console.log(decoded);
-
+//Building the rawData
     // var encodedFunction = this.state.web3.sha3('transferFrom(address,address,uint256)').slice(0, 10)
     // console.log(encodedFunction);
     // var encodedParam = coder.encodeParams(["address", "address", "uint256"], [this.state.fromAddressHex, this.state.employeeAddress, this.state.tokensClaimable]);
     // console.log(encodedParam);
     // var decoded = coder.decodeParams(["address", "address", "uint256"], encodedParam)
     // console.log(decoded);
-
-    //I do not know why the following "getData" function does not work! Returns an error
-    //let data = this.state.humanStandardTokenInstance.transferFrom.getData(this.state.fromAddressHex, this.state.employeeAddress, this.state.tokensClaimable);
-//GAS PRICE???
-    // this.state.humanStandardTokenInstance.contract.transferFrom.estimateGas(this.state.fromAddressHex, this.state.employeeAddress , this.state.tokensClaimable, (err, gas) => {
-    //   console.log(gas);
-    // })
     console.log("Here", this.state.fromAddressHex);
     var gasPrice;
     this.state.web3.eth.getTransactionCount(this.state.fromAddressHex, "pending", (err, Nonce) => {
@@ -200,23 +187,9 @@ class claim extends Component {
         to: this.state.humanStandardTokenInstance.address,
         data: rawData
       }, (err, gasPrice) => {
+        console.log("Gas Price", gasPrice)
         var gasPriceHex = this.state.web3.toHex(gasPrice);
         var gasLimitHex = this.state.web3.toHex(3000000);
-      //Sending just a Transaction
-        // var transactionObject = {
-        //   nonce: 14,
-        //   gasPrice: '0x09184e72a000',
-        //   gasLimit: gasLimitHex,
-        //   to: this.state.employeeAddress,
-        //   from: this.state.fromAddressHex,
-        //   value: 1000000000000000000, //Sending 0 Ether(in wei) because I am just trying to transfer over tokens
-        //   // data: rawData,
-        // }
-        // this.state.web3.eth.sendTransaction(transactionObject, "pending", function(err, transactionHash) {
-        //   console.log(err);
-        //   if (!err)
-        //     console.log(transactionHash); // "0x7f9fade1c0d57a7af66ab4ead7c2eb7b11a91385"
-        // });
       //Sending a Raw Transaction
         var rawTx = {
           nonce: nonce, //The transactions are not going through they are still pending so that is why the nonce is incorrect
@@ -241,9 +214,15 @@ class claim extends Component {
     this.setState({
       open: true,
       stepIndex: stepIndex + 1,
-      finished: stepIndex >= 2,
+      finished: true,
     });
   }
+
+  handleRequestClose = () => {
+    this.setState({
+      open: false,
+    });
+  };
 
   renderStepActions(step) {
     const {stepIndex} = this.state;
@@ -260,14 +239,6 @@ class claim extends Component {
               onTouchTap={this.handleSubmit}
               style={{marginRight: 12}}
             />
-            {/*
-            <Snackbar
-              open={this.state.open}
-              message="XXX was added to your balance"
-              autoHideDuration={4000}
-              onRequestClose={this.handleRequestClose}
-            />
-            */}
           </span>
         ) : (
           <RaisedButton
@@ -303,11 +274,6 @@ class claim extends Component {
               <Particles style={styles.particles} params={styles.particlesParam}/>
             */}
             <CardTitle title="CLAIM TOKENS" titleStyle={styles.cardTitle}/>
-            Step: {this.state.stepIndex}
-            <br/>
-            Menu: {this.state.value}
-            <br/>
-            {this.state.employeeAddress}
             <div style={{maxWidth: 500, maxHeight: 400, margin: 'auto'}}>
               <Stepper activeStep={stepIndex} orientation="vertical">
                 <Step>
@@ -351,21 +317,29 @@ class claim extends Component {
                   <StepContent>
                     {this.renderStepActions(2)}
                   </StepContent>
+
                 </Step>
               </Stepper>
-            </div>
-            {finished && (
-            <div style={{margin: '20px 0', textAlign: 'center'}}>
-              Would you like to make another claim?
-              <br/><br/>
-              <RaisedButton label="Hell Ya" primary={true}
-                onTouchTap={(event) => {
-                  event.preventDefault();
-                  this.setState({stepIndex: 0, finished: false});
-                }}
+              <Snackbar
+                open={this.state.open}
+                message={this.state.tokensClaimable + " CN tokens added to your address"}
+                autoHideDuration={4000}
+                onRequestClose={this.handleRequestClose}
               />
-          </div>
-          )}
+            </div>
+            {/**/}
+              {finished && (
+              <div style={{margin: '20px 0', textAlign: 'center'}}>
+                Would you like to make another claim?
+                <br/><br/>
+                <RaisedButton label="Hell Ya" primary={true}
+                  onTouchTap={(event) => {
+                    event.preventDefault();
+                    this.setState({stepIndex: 0, finished: false});
+                  }}
+                />
+              </div>
+              )}
           </div>
         </Card>
       </div>

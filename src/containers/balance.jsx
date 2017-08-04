@@ -192,6 +192,7 @@ class redeem extends Component{
               <br/>
               <h3>Come back soon for the alpha launch!</h3>
             </div>
+            © 2017 Shout Outs <img style={{verticalAlign: "middle"}} src="https://virtue.poker/wp-content/uploads/2017/07/consenSys-logo-wht-sm.png" alt="Blast Off!" height="50" width="50"/> A ConsenSys Formation
           </CardText>
         </Card>
       </div>

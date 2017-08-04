@@ -8,6 +8,7 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import Introduction from './containers/introduction.jsx';
 import Claim from './containers/claim.jsx';
 import Redeem from './containers/redeem.jsx';
+import Balance from './containers/balance.jsx';
 
 const styles = {
   appBar: {
@@ -91,7 +92,7 @@ class App extends Component {
         <div>
           <AppBar
             style={styles.appBar}
-            title="ConsenSys North eh?"
+            title="ConsenSys North Tokens eh?"
             iconElementRight={
               <Tabs onChange={this.onChangeTabs} style={styles.tabs}>
                 <Tab buttonStyle={styles.buttons} label="Vision" />
@@ -104,7 +105,10 @@ class App extends Component {
         </div>
         <Introduction />
         <Claim id="Claim"/>
-        <Redeem/>
+        {/*
+          <Redeem/>
+        */}
+        <Balance/>
         {/*
           ref={(el) => { this.Redeem = el; }}
         */}
