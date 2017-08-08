@@ -105,9 +105,7 @@ class App extends Component {
         </div>
         <Introduction />
         <Claim id="Claim"/>
-        {/*
-          <Redeem/>
-        */}
+        <Redeem/>
         <Balance/>
         {/*
           ref={(el) => { this.Redeem = el; }}

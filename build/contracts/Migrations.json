@@ -222,8 +222,14 @@
       "links": {},
       "address": "0xec94e61da306742bd8a1664d3f2fc17fe053beee",
       "updated_at": 1501854836025
+    },
+    "1502112733991": {
+      "events": {},
+      "links": {},
+      "address": "0x00f1bb5d91dd8058fa9a8ab099d3d402e4f9b10d",
+      "updated_at": 1502112774429
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1501854836025
+  "updated_at": 1502112774429
 }

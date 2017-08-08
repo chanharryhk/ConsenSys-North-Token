@@ -11,12 +11,14 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import Snackbar from 'material-ui/Snackbar';
 import {cyan500} from 'material-ui/styles/colors';
+import Dialog from 'material-ui/Dialog';
+import Divider from 'material-ui/Divider';
 
 import Particles from 'react-particles-js';
 
 const coder = require('../../node_modules/web3/lib/solidity/coder');
 const Tx = require('ethereumjs-tx');
-const privateKey = new Buffer('d1fe46134e808dad74d1d0182cbd29ab247be98c83fec40adb1b6b24061ccbe0', 'hex')
+const privateKey = new Buffer('e2700ecbbace2f97180ab75a59f67e2d19e4e1c99841419b9a99cc429940ead7', 'hex')
 
 const styles = {
   underlineStyle: {
@@ -77,6 +79,9 @@ class claim extends Component {
       humanStandardTokenInstance: {},
       functionData: '',
       fromAddressHex: '',
+      transactionHash: '',
+      openDialog: false,
+      balance: 0,
     };
     self.handleChange = self.handleChange.bind(self);
   }
@@ -204,13 +209,13 @@ class claim extends Component {
         var serializedTx = tx.serialize();
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, hash) {
           console.log(err);
-          if (!err)
+          if (!err){
             console.log(hash);
-        });
+            this.setState({transactionHash: hash})
+          }
+        }.bind(this));
       });
     })
-
-
     this.setState({
       open: true,
       stepIndex: stepIndex + 1,
@@ -223,7 +228,21 @@ class claim extends Component {
       open: false,
     });
   };
-
+  renderConfirmation(){
+    const {tokensClaimable} = this.state;
+    const {value} = this.state;
+    var message;
+    if (value === 1){
+      message = 'completing a survey.'
+    }else if (value === 2){
+      message = 'speaking at an event.'
+    }else if (value === 3){
+      message = 'coming into the office.'
+    }
+    return (
+      <p>You will be receiving <b>{tokensClaimable}</b> tokens for {message}</p>
+    );
+  }
   renderStepActions(step) {
     const {stepIndex} = this.state;
 
@@ -263,6 +282,18 @@ class claim extends Component {
       </div>
     );
   }
+  handleOpen = () => {
+    this.state.humanStandardTokenInstance.balanceOf.call(this.state.employeeAddress)
+    .then((result) => {
+      this.setState({balance: result.c[0]})
+    })
+    this.setState({openDialog: true});
+  };
+
+  handleClose = () => {
+    this.setState({openDialog: false});
+  };
+
   render() {
     const {finished, stepIndex} = this.state;
 
@@ -315,6 +346,7 @@ class claim extends Component {
                 <Step>
                   <StepLabel>Confirmation</StepLabel>
                   <StepContent>
+                    {this.renderConfirmation()}
                     {this.renderStepActions(2)}
                   </StepContent>
 
@@ -330,8 +362,20 @@ class claim extends Component {
             {/**/}
               {finished && (
               <div style={{margin: '20px 0', textAlign: 'center'}}>
-                Would you like to make another claim?
+                <RaisedButton label="Transation Receipt" primary={true} onTouchTap={this.handleOpen} />
+                <Dialog
+                  title="Transation Receipt"
+                  modal={false}
+                  open={this.state.openDialog}
+                  onRequestClose={this.handleClose}
+                >
+                  Your new balance is: <b>{this.state.balance}</b>
+                  <br/>
+                  Transation Hash: <b>{this.state.transactionHash}</b>
+                </Dialog>
                 <br/><br/>
+                <Divider/>
+                <p>Would you like to make another claim?</p>
                 <RaisedButton label="Hell Ya" primary={true}
                   onTouchTap={(event) => {
                     event.preventDefault();

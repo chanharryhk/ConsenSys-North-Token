@@ -131,7 +131,7 @@ class redeem extends Component{
       <div style={styles.container}>
         <Card style={styles.card}>
           <div style={styles.wrap}>
-            <CardTitle title="TOKEN BALANCE" titleStyle={styles.cardTitle}/>
+            <CardTitle title="CONSENSYS MERCH" titleStyle={styles.cardTitle}/>
               <TextField
                 floatingLabelText="0x | Address"
                 floatingLabelStyle={styles.floatingLabelStyle}
@@ -184,15 +184,6 @@ class redeem extends Component{
               <Divider/>
             */}
           </div>
-          <CardText color="white">
-            <div style={styles.title}>
-              <h3>Redeeming has not started yet but keep collecting!</h3>
-              <br/>
-              <img src="https://image.flaticon.com/icons/svg/214/214697.svg" alt="Blast Off!" height="150" width="150"/>
-              <br/>
-              <h3>Come back soon for the alpha launch!</h3>
-            </div>
-          </CardText>
         </Card>
       </div>
     );

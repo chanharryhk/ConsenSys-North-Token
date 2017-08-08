@@ -12,8 +12,8 @@ import Dinner from '../images/dinner.jpg';
 
 const styles = {
     card: {
-      backgroundColor: "#00bcd4",
-      color: "white"
+      backgroundColor: "white",
+      color: "#00bcd4"
     },
     container: {
       textAlign: "center",
@@ -25,7 +25,7 @@ const styles = {
       fontFamily: "Roboto, sans-serif",
       fontSize: "2em",
       textAlign: "left",
-      color: "white",
+      color: "#00bcd4",
     },
     paperStyle: {
       height: 200,
@@ -38,10 +38,10 @@ const styles = {
       padding: "5%",
     },
     underlineStyle: {
-      borderColor: "white",
+      borderColor: "#00bcd4",
     },
     floatingLabelStyle: {
-      color: "white",
+      color: "#00bcd4",
     },
     textFieldStyle: {
       width: "50%",
@@ -51,7 +51,7 @@ const styles = {
     },
 }
 
-class redeem extends Component{
+class balance extends Component{
   constructor(props) {
     super(props);
     const self = this;
@@ -184,7 +184,7 @@ class redeem extends Component{
               <Divider/>
             */}
           </div>
-          <CardText color="white">
+          <CardText color="#00bcd4">
             <div style={styles.title}>
               <h3>Redeeming has not started yet but keep collecting!</h3>
               <br/>
@@ -192,7 +192,7 @@ class redeem extends Component{
               <br/>
               <h3>Come back soon for the alpha launch!</h3>
             </div>
-            © 2017 Shout Outs <img style={{verticalAlign: "middle"}} src="https://virtue.poker/wp-content/uploads/2017/07/consenSys-logo-wht-sm.png" alt="Blast Off!" height="50" width="50"/> A ConsenSys Formation
+            © 2017 Shout Outs <img style={{verticalAlign: "middle"}} src="http://balanc3.net/assets/css/images/consensyslogo.png" alt="ConsenSys Logo" height="50" width="50"/> A ConsenSys Formation
           </CardText>
         </Card>
       </div>
@@ -200,4 +200,4 @@ class redeem extends Component{
   }
 }
 
-export default redeem;
+export default balance;
