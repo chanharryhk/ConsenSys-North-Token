@@ -98,6 +98,7 @@ class App extends Component {
                 <Tab buttonStyle={styles.buttons} label="Vision" />
                 <Tab buttonStyle={styles.buttons} label="Claim"  />
                 <Tab buttonStyle={styles.buttons} label="Redeem" />
+                <Tab buttonStyle={styles.buttons} label="Balance" />
               </Tabs>
             }
             showMenuIconButton={false}

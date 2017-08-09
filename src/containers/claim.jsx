@@ -18,7 +18,7 @@ import Particles from 'react-particles-js';
 
 const coder = require('../../node_modules/web3/lib/solidity/coder');
 const Tx = require('ethereumjs-tx');
-const privateKey = new Buffer('e2700ecbbace2f97180ab75a59f67e2d19e4e1c99841419b9a99cc429940ead7', 'hex')
+const privateKey = new Buffer('920f981f0f4793c7cd5c3bd9a1dba4d9fd9e55fb3d6c5bff4f29e4afeae37edb', 'hex')
 
 const styles = {
   underlineStyle: {
@@ -82,6 +82,7 @@ class claim extends Component {
       transactionHash: '',
       openDialog: false,
       balance: 0,
+      errorText: '',
     };
     self.handleChange = self.handleChange.bind(self);
   }
@@ -144,9 +145,15 @@ class claim extends Component {
   handleChange(event){
     this.setState({[event.target.id]: event.target.value});
     if(this.state.web3.isAddress(event.target.value)){
-      this.setState({disabledButton: false});
+      this.setState({
+        disabledButton: false,
+        errorText: '',
+      });
     } else {
-      this.setState({disabledButton: true});
+      this.setState({
+        disabledButton: true,
+        errorText: 'Invalid Address',
+      });
     }
   }
 
@@ -339,6 +346,7 @@ class claim extends Component {
                       type="text"
                       id="employeeAddress"
                       onChange={this.handleChange}
+                      errorText= {this.state.errorText}
                     />
                     {this.renderStepActions(1)}
                   </StepContent>
