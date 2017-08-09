@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
-import IconButton from 'material-ui/IconButton';
-import {Card, CardText, CardTitle} from 'material-ui/Card';
+import {Card, CardTitle} from 'material-ui/Card';
 import Dialog from 'material-ui/Dialog';
 
 import Dinner from '../images/dinner.jpg'
@@ -114,7 +113,7 @@ class redeem extends Component{
                   rows={tile.featured ? 2 : 1}
                   onTouchTap={() => this.handleItemClick(tile.item, tile.price)}
                 >
-                  <img src={tile.img}/>
+                  <img src={tile.img} alt="item"/>
                 </GridTile>
               ))}
             </GridList>

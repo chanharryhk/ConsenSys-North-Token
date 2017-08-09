@@ -190,7 +190,6 @@ class claim extends Component {
     // var decoded = coder.decodeParams(["address", "address", "uint256"], encodedParam)
     // console.log(decoded);
     console.log("Here", this.state.fromAddressHex);
-    var gasPrice;
     this.state.web3.eth.getTransactionCount(this.state.fromAddressHex, "pending", (err, Nonce) => {
       //"pending" is a magical word
       var nonce = this.state.web3.toHex(Nonce)
@@ -346,7 +345,7 @@ class claim extends Component {
                       type="text"
                       id="employeeAddress"
                       onChange={this.handleChange}
-                      errorText= {this.state.errorText}
+                      errorText={this.state.errorText}
                     />
                     {this.renderStepActions(1)}
                   </StepContent>

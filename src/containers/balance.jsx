@@ -4,11 +4,7 @@ import {Card, CardText, CardTitle} from 'material-ui/Card';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
-import Paper from 'material-ui/Paper';
-import Divider from 'material-ui/Divider';
 import getWeb3 from '../utils/getWeb3';
-
-import Dinner from '../images/dinner.jpg';
 
 const styles = {
     card: {
