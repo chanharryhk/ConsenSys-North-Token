@@ -18,8 +18,8 @@ import Particles from 'react-particles-js';
 
 const coder = require('../../node_modules/web3/lib/solidity/coder');
 const Tx = require('ethereumjs-tx');
-const privateKey = new Buffer('920f981f0f4793c7cd5c3bd9a1dba4d9fd9e55fb3d6c5bff4f29e4afeae37edb', 'hex')
-
+const privateKey = new Buffer('a11010e27a530294f107580eb3f669ac8c99779ea5e2ce02a0e24f1d988a5dfe', 'hex')
+//privateKey that provides the gas for all the transactions
 const styles = {
   underlineStyle: {
     borderColor: cyan500,
@@ -115,7 +115,7 @@ class claim extends Component {
         // console.log(instance);
 // Contract ABI
         // console.log("abi", this.state.web3.eth.contract(HumanStandardTokenContract.abi).at(instance.address))
-        this.state.web3.eth.getTransaction("0x331c249ed094c39949728b4629ad6eb6606f7c1d501396aa1ca0dccd8d66ba07", (err, result) => {
+        this.state.web3.eth.getTransaction("0x7c88b04d3583259b1c7f8f7b653a6208f344a2c88518a4370b3babfddf187a1e", (err, result) => {
           console.log("Contract Deployment / getting the contract deployer's address", result);
           this.setState({fromAddressHex: result.from})
         })
@@ -126,6 +126,7 @@ class claim extends Component {
         this.setState({
           humanStandardTokenInstance: instance,
         });
+        console.log(instance);
       })
     })
   }
@@ -189,7 +190,8 @@ class claim extends Component {
     // console.log(encodedParam);
     // var decoded = coder.decodeParams(["address", "address", "uint256"], encodedParam)
     // console.log(decoded);
-    console.log("Here", this.state.fromAddressHex);
+    console.log("From Address", this.state.fromAddressHex);
+    console.log("Contract Address", this.state.humanStandardTokenInstance.address);
     this.state.web3.eth.getTransactionCount(this.state.fromAddressHex, "pending", (err, Nonce) => {
       //"pending" is a magical word
       var nonce = this.state.web3.toHex(Nonce)
