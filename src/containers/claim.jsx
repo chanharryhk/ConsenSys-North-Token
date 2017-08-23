@@ -115,7 +115,7 @@ class claim extends Component {
         // console.log(instance);
 // Contract ABI
         // console.log("abi", this.state.web3.eth.contract(HumanStandardTokenContract.abi).at(instance.address))
-        this.state.web3.eth.getTransaction("0x89d352e01ce7c9ddb75ff29564b26130e62cdda1d4a8699a0724523e39d0871c", (err, result) => {
+        this.state.web3.eth.getTransaction("0x2619f311beaedced98fc7cfc887704e2be3813274c0e6f74bbbf138d2a433137", (err, result) => {
           console.log("Contract Deployment / getting the contract deployer's address", result);
           this.setState({fromAddressHex: result.from})
         })
@@ -205,12 +205,13 @@ class claim extends Component {
         data: rawData
       }, (err, gasPrice) => {
         console.log("Gas Price", gasPrice)
-        var gasPriceHex = this.state.web3.toHex(gasPrice);
-        var gasLimitHex = this.state.web3.toHex(3000000);
+        var gasPriceHex = this.state.web3.toHex(2000000);
+        var gasLimitHex = this.state.web3.toHex(500000);
+        console.log(gasPriceHex);
       //Sending a Raw Transaction
         var rawTx = {
-          nonce: 1000, //The transactions are not going through they are still pending so that is why the nonce is incorrect
-          gasPrice: gasPriceHex,
+          nonce: nonce, //The transactions are not going through they are still pending so that is why the nonce is incorrect
+          gasPrice: 2000000,
           gasLimit: gasLimitHex,
           to: this.state.humanStandardTokenInstance.address,
           value: "0x00", //Sending 0 Ether because I am just trying to transfer over tokens
