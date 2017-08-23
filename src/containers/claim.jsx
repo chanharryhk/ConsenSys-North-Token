@@ -115,7 +115,7 @@ class claim extends Component {
         // console.log(instance);
 // Contract ABI
         // console.log("abi", this.state.web3.eth.contract(HumanStandardTokenContract.abi).at(instance.address))
-        this.state.web3.eth.getTransaction("0x7c88b04d3583259b1c7f8f7b653a6208f344a2c88518a4370b3babfddf187a1e", (err, result) => {
+        this.state.web3.eth.getTransaction("0x89d352e01ce7c9ddb75ff29564b26130e62cdda1d4a8699a0724523e39d0871c", (err, result) => {
           console.log("Contract Deployment / getting the contract deployer's address", result);
           this.setState({fromAddressHex: result.from})
         })
@@ -127,6 +127,7 @@ class claim extends Component {
           humanStandardTokenInstance: instance,
         });
         console.log(instance);
+        console.log(this.state.web3);
       })
     })
   }
@@ -145,10 +146,12 @@ class claim extends Component {
 
   handleChange(event){
     this.setState({[event.target.id]: event.target.value});
+    console.log(event.target.id, event.target.value);
     if(this.state.web3.isAddress(event.target.value)){
       this.setState({
         disabledButton: false,
         errorText: '',
+
       });
     } else {
       this.setState({
@@ -192,6 +195,7 @@ class claim extends Component {
     // console.log(decoded);
     console.log("From Address", this.state.fromAddressHex);
     console.log("Contract Address", this.state.humanStandardTokenInstance.address);
+
     this.state.web3.eth.getTransactionCount(this.state.fromAddressHex, "pending", (err, Nonce) => {
       //"pending" is a magical word
       var nonce = this.state.web3.toHex(Nonce)
@@ -205,7 +209,7 @@ class claim extends Component {
         var gasLimitHex = this.state.web3.toHex(3000000);
       //Sending a Raw Transaction
         var rawTx = {
-          nonce: nonce, //The transactions are not going through they are still pending so that is why the nonce is incorrect
+          nonce: 1000, //The transactions are not going through they are still pending so that is why the nonce is incorrect
           gasPrice: gasPriceHex,
           gasLimit: gasLimitHex,
           to: this.state.humanStandardTokenInstance.address,

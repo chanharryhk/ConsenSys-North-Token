@@ -6,7 +6,8 @@ module.exports = {
     development: {
       host: "localhost",
       port: 8545,
-      network_id: "*" // Match any network id
+      network_id: "3", // Match any network id
+      gas: 500000
     },
     ropsten: {
       provider: new HDWalletProvider(mnemonic, "https://ropsten.infura.io/"),
@@ -18,3 +19,4 @@ module.exports = {
     }
   }
 };
+// ravine granny geranium oversweet providing dedicator anaerobic amiss crawfish cornbread stainless goldfish
