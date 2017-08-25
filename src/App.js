@@ -69,11 +69,11 @@ class App extends Component {
 
 
     // Declaring this for later so we can chain functions on SimpleStorage.
-    var humanStandardTokenInstance
+    // var humanStandardTokenInstance
 
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      console.log(accounts);
+      // console.log(accounts);
     })
   }
   /*

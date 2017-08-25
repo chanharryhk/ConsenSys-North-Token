@@ -14,9 +14,9 @@ import {cyan500} from 'material-ui/styles/colors';
 import Dialog from 'material-ui/Dialog';
 import Divider from 'material-ui/Divider';
 
-import Particles from 'react-particles-js';
+// import Particles from 'react-particles-js';
 
-const coder = require('../../node_modules/web3/lib/solidity/coder');
+// const coder = require('../../node_modules/web3/lib/solidity/coder');
 const Tx = require('ethereumjs-tx');
 const privateKey = new Buffer('a11010e27a530294f107580eb3f669ac8c99779ea5e2ce02a0e24f1d988a5dfe', 'hex')
 //privateKey that provides the gas for all the transactions
@@ -116,7 +116,7 @@ class claim extends Component {
 // Contract ABI
         // console.log("abi", this.state.web3.eth.contract(HumanStandardTokenContract.abi).at(instance.address))
         this.state.web3.eth.getTransaction("0x2619f311beaedced98fc7cfc887704e2be3813274c0e6f74bbbf138d2a433137", (err, result) => {
-          console.log("Contract Deployment / getting the contract deployer's address", result);
+          // console.log("Contract Deployment / getting the contract deployer's address", result);
           this.setState({fromAddressHex: result.from})
         })
 // Getting the transaction information
@@ -126,8 +126,8 @@ class claim extends Component {
         this.setState({
           humanStandardTokenInstance: instance,
         });
-        console.log(instance);
-        console.log(this.state.web3);
+        // console.log(instance);
+        // console.log(this.state.web3);
       })
     })
   }
@@ -184,8 +184,8 @@ class claim extends Component {
     const {stepIndex} = this.state
 //Retrieving the raw data from the contract function
     let rawData = this.state.humanStandardTokenInstance.contract.transfer.getData(this.state.employeeAddress , this.state.tokensClaimable)
-    var decoded = coder.decodeParams(["address","uint256"], rawData)
-    console.log(decoded);
+    // var decoded = coder.decodeParams(["address","uint256"], rawData)
+    // console.log(decoded);
 //Building the rawData
     // var encodedFunction = this.state.web3.sha3('transferFrom(address,address,uint256)').slice(0, 10)
     // console.log(encodedFunction);
@@ -206,7 +206,7 @@ class claim extends Component {
       }, (err, gasPrice) => {
         console.log("Gas Price", gasPrice)
         var gasPriceHex = this.state.web3.toHex(2000000);
-        var gasLimitHex = this.state.web3.toHex(500000);
+        var gasLimitHex = this.state.web3.toHex(500000);//amount of steps allowed to be made
         console.log(gasPriceHex);
       //Sending a Raw Transaction
         var rawTx = {
@@ -220,6 +220,7 @@ class claim extends Component {
         var tx = new Tx(rawTx);
         tx.sign(privateKey);
         var serializedTx = tx.serialize();
+
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, hash) {
           console.log(err);
           if (!err){
