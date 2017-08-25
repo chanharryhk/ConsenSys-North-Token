@@ -146,7 +146,6 @@ class claim extends Component {
 
   handleChange(event){
     this.setState({[event.target.id]: event.target.value});
-    console.log(event.target.id, event.target.value);
     if(this.state.web3.isAddress(event.target.value)){
       this.setState({
         disabledButton: false,
@@ -193,21 +192,16 @@ class claim extends Component {
     // console.log(encodedParam);
     // var decoded = coder.decodeParams(["address", "address", "uint256"], encodedParam)
     // console.log(decoded);
-    console.log("From Address", this.state.fromAddressHex);
-    console.log("Contract Address", this.state.humanStandardTokenInstance.address);
-
     this.state.web3.eth.getTransactionCount(this.state.fromAddressHex, "pending", (err, Nonce) => {
       //"pending" is a magical word
       var nonce = this.state.web3.toHex(Nonce)
-      console.log(nonce);
       this.state.web3.eth.estimateGas({
         to: this.state.humanStandardTokenInstance.address,
         data: rawData
       }, (err, gasPrice) => {
-        console.log("Gas Price", gasPrice)
+        // console.log("Gas Price", gasPrice)
         var gasPriceHex = this.state.web3.toHex(2000000);
         var gasLimitHex = this.state.web3.toHex(500000);//amount of steps allowed to be made
-        console.log(gasPriceHex);
       //Sending a Raw Transaction
         var rawTx = {
           nonce: nonce, //The transactions are not going through they are still pending so that is why the nonce is incorrect
@@ -222,9 +216,9 @@ class claim extends Component {
         var serializedTx = tx.serialize();
 
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, hash) {
-          console.log(err);
+          // console.log(err);
           if (!err){
-            console.log(hash);
+            // console.log(hash);
             this.setState({transactionHash: hash})
           }
         }.bind(this));

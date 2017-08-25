@@ -117,7 +117,6 @@ class redeem extends Component{
     HumanStandardToken.setProvider(this.state.web3.currentProvider)
 
     this.state.web3.eth.getAccounts((error, accounts) => {
-      console.log(accounts);
       HumanStandardToken.deployed()
       .then((instance) => {
         this.state.web3.eth.getTransaction("0x2619f311beaedced98fc7cfc887704e2be3813274c0e6f74bbbf138d2a433137", (err, result) => {
@@ -126,16 +125,10 @@ class redeem extends Component{
         this.setState({humanStandardTokenInstance: instance})
       })
     })
-    console.log(this.state.web3.eth);
   }
 
   handleSubmit = () => {
-    console.log('User Address', this.state.web3.eth.accounts[0]);
-    console.log('Price', this.state.itemPrice);
-    console.log(this.state.humanStandardTokenInstance.contract);
     let rawData = this.state.humanStandardTokenInstance.contract.transfer.getData(this.state.fromAddressHex , this.state.itemPrice)
-
-    console.log(rawData);
     this.state.web3.eth.sendTransaction({
       from: this.state.web3.eth.accounts[0],
       to: "0x82c2c26111ee784c8ecdacd523fb315587f0b665", //Contract Address
