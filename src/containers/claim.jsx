@@ -10,7 +10,7 @@ import {Step, Stepper, StepLabel, StepContent,} from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import Snackbar from 'material-ui/Snackbar';
-import {cyan500} from 'material-ui/styles/colors';
+import {amber400, grey50} from 'material-ui/styles/colors';
 import Dialog from 'material-ui/Dialog';
 import Divider from 'material-ui/Divider';
 
@@ -21,16 +21,19 @@ const Tx = require('ethereumjs-tx');
 const privateKey = new Buffer('a11010e27a530294f107580eb3f669ac8c99779ea5e2ce02a0e24f1d988a5dfe', 'hex')
 //privateKey that provides the gas for all the transactions
 const styles = {
+  card: {
+    backgroundColor: grey50,
+  },
   underlineStyle: {
-    borderColor: cyan500,
+    borderColor: amber400,
   },
   floatingLabelStyle: {
-    color: cyan500,
+    color: amber400,
   },
   cardTitle: {
     fontFamily: "Roboto, sans-serif",
     fontSize: "2em",
-    color: cyan500,
+    color: amber400,
   },
   wrap: {
     padding: "5%",
@@ -51,12 +54,12 @@ const styles = {
         }
       },
       color: {
-        value: cyan500
+        value: amber400
       },
       line_linked: {
         shadow: {
           enable: true,
-          color: cyan500,
+          color: amber400,
           blur: 5
         }
       }
@@ -216,9 +219,9 @@ class claim extends Component {
         var serializedTx = tx.serialize();
 
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, hash) {
-          // console.log(err);
+          console.log(err);
           if (!err){
-            // console.log(hash);
+            console.log(hash);
             this.setState({transactionHash: hash})
           }
         }.bind(this));
@@ -307,7 +310,7 @@ class claim extends Component {
 
     return (
       <div style={{position: "relative"}}>
-        <Card>
+        <Card style={styles.card}>
           <div style={styles.wrap}>
             {/*
               <Particles style={styles.particles} params={styles.particlesParam}/>

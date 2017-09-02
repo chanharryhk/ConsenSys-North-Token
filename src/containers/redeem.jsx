@@ -7,8 +7,13 @@ import {Card, CardTitle} from 'material-ui/Card';
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
 import DatePicker from 'material-ui/DatePicker';
+import {amber400, yellow800} from 'material-ui/styles/colors';
 
 import Dinner from '../images/dinner.jpg';
+import Sweater from '../images/sweater.jpg';
+import Movie from '../images/movie.jpg';
+import GiftCard from '../images/giftcard.jpg';
+import Computer from '../images/computer.jpg';
 
 const styles = {
   root: {
@@ -18,11 +23,11 @@ const styles = {
   },
   gridList: {
     width: '100%',
-    height: 450,
+    height: 550,
     overflowY: 'auto',
   },
   card: {
-    backgroundColor: "#00bcd4",
+    backgroundColor: amber400,
     color: "white"
   },
   wrap: {
@@ -34,52 +39,41 @@ const styles = {
     textAlign: "left",
     color: "white",
   },
+  tileTitle: {
+    color: yellow800,
+  },
 };
 
 const tilesData = [
   {
-    img: 'https://www.hdwallpapers.in/walls/2014_lamborghini_huracan_lp610_4-wide.jpg',
-    item: 'Lamborghini',
-    id: 0,
-    price: 10000,
-    featured: true,
-    description: 'You wouldn\'t download a lambo would you?',
-  },
-  {
-    img: 'http://www.4freephotos.com/medium/batch/Raining--on-umbrella813.jpg',
-    item: 'Sick Day',
-    id: 1,
-    price: 1000,
-    description: 'I don\'t mind spending every day. Out on your corner in the pouring rain.',
-  },
-  {
-    img: 'http://collectwall.com/wp-content/uploads/2016/10/Dog-Run-Autumn-New-Wallpaper.jpg',
-    item: 'Doggo',
-    id: 2,
-    price: 5000,
-    description: 'Adopting an abanbonded neopet',
-  },
-  {
     img: Dinner,
-    item: 'Dinner w/ Joe',
-    price: 1000000,
+    item: 'Sushi Party',
+    id: 0,
+    price: 250000,
+    featured: true,
+    description: 'It\'s party time! Contribute points towards this office event',
+  },
+  {
+    img: Movie,
+    item: 'Movie Ticket',
+    id: 1,
+    price: 100,
+    description: 'Don\'t forget the popcorn!',
+  },
+  {
+    img: GiftCard,
+    item: 'Gift Card',
+    id: 2,
+    price: 250,
+    description: 'Treat yourself to something nice!',
+  },
+  {
+    img: Sweater,
+    item: 'Sweater',
+    price: 500,
     id: 3,
     featured: true,
-    description: 'Dinner with the most handsome man in the space.',
-  },
-  {
-    img: 'https://cdn.daysoftheyear.com/wp-content/images/paperclip-day-e1462623051825.jpg',
-    item: 'A Few Paper Clips',
-    id: 4,
-    price: 43,
-    description: 'A physical \'CHAIN\' building starter kit for bitcoin-ers who can\'t handle Ethereum',
-  },
-  {
-    img: 'https://www.stevenaitchison.co.uk/wp-content/uploads/paperclip.jpg',
-    item: '1 Paper Clip',
-    id: 5,
-    price: 10,
-    description: 'Why would you even click on this? Everything is digital',
+    description: 'Quality ConsenSys merchandise',
   },
 ];
 
@@ -172,7 +166,7 @@ class redeem extends Component{
             <CardTitle title="GALLERY" titleStyle={styles.cardTitle}/>
             <GridList
               cols={2}
-              cellHeight={200}
+              cellHeight={275}
               padding={10}
               style={styles.gridList}
             >
@@ -181,9 +175,11 @@ class redeem extends Component{
                   style={{cursor: 'pointer'}}
                   key={tile.img}
                   title={tile.item}
+                  titleStyle={styles.tileTitle}
+                  subtitleStyle={styles.tileTitle}
                   subtitle={<span>{tile.price} Tokens</span>}
                   titlePosition="top"
-                  titleBackground="linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
+                  titleBackground="linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 70%,rgba(0,0,0,0) 100%)"
                   cols={tile.featured ? 2 : 1}
                   rows={tile.featured ? 2 : 1}
                   onTouchTap={() => this.handleItemClick(tile.item, tile.price, tile.id, tile.description)}
@@ -200,7 +196,6 @@ class redeem extends Component{
             >
               {this.state.itemDescription}
               <p>Cost: {this.state.itemPrice} tokens</p>
-              <p>Item ID: {this.state.itemID}</p>
               <DatePicker hintText="Pick a date" mode="landscape" style={{display: this.state.calendarVisibility}}/>
               <RaisedButton
                 label={'Purchase'}

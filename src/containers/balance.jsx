@@ -6,10 +6,12 @@ import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
 import getWeb3 from '../utils/getWeb3';
 
+import {amber400, grey50} from 'material-ui/styles/colors';
+import ConsenSysLogo from '../images/consensysLogo.svg';
+
 const styles = {
     card: {
-      backgroundColor: "white",
-      color: "#00bcd4"
+      backgroundColor: grey50,
     },
     container: {
       textAlign: "center",
@@ -21,7 +23,7 @@ const styles = {
       fontFamily: "Roboto, sans-serif",
       fontSize: "2em",
       textAlign: "left",
-      color: "#00bcd4",
+      color: amber400,
     },
     paperStyle: {
       height: 200,
@@ -34,10 +36,10 @@ const styles = {
       padding: "5%",
     },
     underlineStyle: {
-      borderColor: "#00bcd4",
+      borderColor: amber400,
     },
     floatingLabelStyle: {
-      color: "#00bcd4",
+      color: amber400,
     },
     textFieldStyle: {
       width: "50%",
@@ -102,16 +104,16 @@ class balance extends Component{
       this.state.humanStandardTokenInstance.balanceOf.call(this.state.employeeAddress)
       .then((result) => {
         if(result.c[0] === 0){
-          this.setState({message: 'Ahhhhh you just entered your private key!...Just kidding you just have '+ result.c + ' tokens LOL'})
+          this.setState({message: 'You just have '+ result.c + ' tokens'})
           // this.setState({message: 'Shhhh don\'t let Joe find out that you have '+ result.c+ ' tokens ಠ~ಠ'})
         }else{
-          this.setState({message: 'Eyyyooo! You got '+ result.c +' ConsenSys North Tokens! ☜(ﾟヮﾟ☜)'})
+          this.setState({message: 'You have '+ result.c +' ConsenSys Tokens!'})
         }
       })
     }else if(this.state.employeeAddress === undefined || this.state.employeeAddress === ''){
-      this.setState({message: 'Silly employee you havent entered anything ¯\\_(ツ)_/¯'})
+      this.setState({message: 'You haven\'t entered anything'})
     }else{
-      this.setState({message: this.state.employeeAddress + ' is not an ethereum address... ummm do you even work at ConsenSys? ಠ_ಠ'})
+      this.setState({message: this.state.employeeAddress + ' is not a valid ethereum address'})
       // this.setState({message: 'it's kinda hard information out of an invalid address})
     }
     this.setState({open: true});
@@ -139,7 +141,7 @@ class balance extends Component{
                 onChange={this.handleChange}
               />
             <br/>
-            <RaisedButton label="CHECK" labelColor="#00BCD4" style={styles.buttonStyle} onTouchTap={this.checkBalance.bind(this)}/>
+            <RaisedButton label="CHECK" labelColor={amber400} style={styles.buttonStyle} onTouchTap={this.checkBalance.bind(this)}/>
             <Dialog
               title="ConsenSys North"
               modal={false}
@@ -148,47 +150,9 @@ class balance extends Component{
             >
               {this.state.message}
             </Dialog>
-            {/*
-              <CardTitle title="CONSENSYS MERCH" titleStyle={styles.cardTitle}/>
-              <Paper
-                id="first"
-                style={styles.paperStyle}
-                zDepth={this.state.shadow}
-                onMouseOver={this.onMouseOver}
-                onMouseOut={this.onMouseOut}
-                children={
-                  <div>
-                    <p>Bobblehead Joe</p>
-                    <img src="https://daks2k3a4ib2z.cloudfront.net/576c036456781b9d0fb18681/57a3fdfa48ec317e4b0ecbf4_lubin_joseph.png" alt="Blast Off!" height="150" width="150"/>
-                  </div>
-                }
-              />
-              <Paper
-                id="second"
-                style={styles.paperStyle}
-                zDepth={this.state.shadow}
-                onMouseOver={this.onMouseOver}
-                onMouseOut={this.onMouseOut}
-                children={
-                  <div>
-                    <p>Candle Light Dinner With Joe</p>
-                    <img src={Dinner} alt="Dinner!" height="200" width="300"/>
-                  </div>
-                }
-              />
-              <Paper id="third" style={styles.paperStyle} zDepth={this.state.shadow} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}/>
-              <Divider/>
-            */}
           </div>
-          <CardText color="#00bcd4">
-            <div style={styles.title}>
-              <h3>Redeeming has not started yet but keep collecting!</h3>
-              <br/>
-              <img src="https://image.flaticon.com/icons/svg/214/214697.svg" alt="Blast Off!" height="150" width="150"/>
-              <br/>
-              <h3>Come back soon for the alpha launch!</h3>
-            </div>
-            © 2017 Shout Outs <img style={{verticalAlign: "middle"}} src="http://balanc3.net/assets/css/images/consensyslogo.png" alt="ConsenSys Logo" height="50" width="50"/> A ConsenSys Formation
+          <CardText color={amber400}>
+            © 2017 Shout Outs A ConsenSys Formation
           </CardText>
         </Card>
       </div>

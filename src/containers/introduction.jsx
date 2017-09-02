@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import {Card, CardText} from 'material-ui/Card';
 import Divider from 'material-ui/Divider';
+import {amber400, amber50, grey50} from 'material-ui/styles/colors';
 // import Particles from 'react-particles-js';
 
 
 const styles = {
     card: {
-      backgroundColor: "#00bcd4",
-      color: "white"
+      backgroundColor: amber400,
+      color: grey50
     },
     container: {
       marginTop: "64px",
@@ -15,6 +16,7 @@ const styles = {
     },
     title: {
       fontSize: "175%",
+      color: grey50,
     },
     info: {
       fontSize: "175%",
@@ -28,14 +30,13 @@ class introduction extends Component{
     return(
       <div style={styles.container}>
         <Card style={styles.card}>
-          <CardText color="white">
+          <CardText color='white'>
             <div style={styles.title}>
-              <h1>ConsenSys North Tokens</h1>
-              <br/>
+              <h1>ConsenSys Tokens</h1>
               {/*
-              <img src="https://image.flaticon.com/icons/svg/185/185286.svg" alt="Toronto" height="150" width="150"/>
-              */}
               <img src="https://lh4.googleusercontent.com/-JyqgXDO42wo/AAAAAAAAAAI/AAAAAAAAADA/b_5Cla6h8Ow/photo.jpg" alt="Toronto" height="150" width="150"/>
+              */}
+              <img src="https://image.flaticon.com/icons/svg/351/351714.svg" alt="Toronto" height="150" width="150"/>
               <br/>
               <h3>Grow the Community. Collect the Tokens. Redeem for Awesome Swag.</h3>
             </div>

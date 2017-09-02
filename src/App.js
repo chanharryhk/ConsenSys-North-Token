@@ -92,7 +92,10 @@ class App extends Component {
         <div>
           <AppBar
             style={styles.appBar}
-            title="ConsenSys North Tokens eh?"
+            title="Shout Outs"
+            iconElementLeft={
+              <img src="https://image.flaticon.com/icons/png/512/281/281353.png" alt="Shout Outs"/>
+            }
             iconElementRight={
               <Tabs onChange={this.onChangeTabs} style={styles.tabs}>
                 <Tab buttonStyle={styles.buttons} label="Vision" />
